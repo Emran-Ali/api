@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { StreamService } from './stream.service';
+import { StreamService } from './stream-auth.service';
 import { StreamController } from './stream.controller';
 
 @Module({
