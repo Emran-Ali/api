@@ -15,7 +15,7 @@ datasource db {
 }
 
 model User {
-  id          Int           @id @default(autoincrement())
+  id          String        @id @default(cuid())
   email       String        @unique
   name        String
   photo       String?
@@ -29,10 +29,10 @@ enum Role {
 }
 
 model UserHasRole {
-  id     Int  @id @default(autoincrement())
-  role   Role @default(USER)
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
+  id     Int    @id @default(autoincrement())
+  role   Role   @default(USER)
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 
   @@unique([userId, role])
 }

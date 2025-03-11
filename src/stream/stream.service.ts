@@ -1,15 +1,14 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { StreamChat } from 'stream-chat';
 import { User } from '../interface/user.interface';
-import { ConfigService } from '@nestjs/config';
+import { ConfigsService } from '../configs/configs.service';
 
 @Injectable()
 export class StreamService {
   private chatClient: StreamChat;
-  constructor(private readonly config: ConfigService) {
-    const apiKey = this.config.get<string>('STREAM_API_KEY') || '';
-    const apiSecret = this.config.get<string>('STREAM_API_SECRET') || '';
-
+  constructor(private readonly configsService: ConfigsService) {
+    const apiKey = this.configsService.streamApiKey;
+    const apiSecret = this.configsService.streamApiSecret;
     this.chatClient = new StreamChat(apiKey, apiSecret);
   }
 
