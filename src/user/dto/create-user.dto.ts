@@ -1,6 +1,7 @@
 import {
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MaxLength,
   MinLength,
@@ -25,6 +26,14 @@ export class CreateUserDto {
   @MinLength(1)
   @MaxLength(60)
   name: string;
+
+  @ApiProperty({
+    description: 'Full Name',
+    example: 'John Doe',
+  })
+  @IsOptional()
+  @IsString()
+  photo: string;
 
   @ApiProperty({
     description: 'Strong Password',

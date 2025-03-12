@@ -3,22 +3,23 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { User } from '../interface/user.interface';
 import { PrismaService } from '../prisma/prisma.service';
-import { StreamService } from '../stream/stream-auth.service';
+import { StreamAuthService } from '../stream/stream-auth.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
-    private streamService: StreamService,
+    private streamAuthService: StreamAuthService,
   ) {}
 
   async loginUser(credential: { email: string; password: string }) {
     const user = await this.validateUser(credential.email, credential.password);
     try {
       return {
-        access_token: this.jwtService.sign(user),
-        chatUserToken: await this.streamService.createUserToken(user),
+        token: this.jwtService.sign(user),
+        streamToken: await this.streamAuthService.createUserToken(user),
+        user: user,
       };
     } catch (error) {
       console.log(error);
@@ -31,11 +32,6 @@ export class AuthService {
       const user = await this.prisma.user.findFirstOrThrow({
         where: { email: email },
         include: {
-          UserHasPermission: {
-            select: {
-              permission: true,
-            },
-          },
           UserHasRole: {
             select: {
               role: true,
@@ -47,16 +43,14 @@ export class AuthService {
         const isValidPassword = await bcrypt.compare(password, user.password);
         if (isValidPassword) {
           const roles = user.UserHasRole.map((role) => role.role);
-          const permissions = user.UserHasPermission.map(
-            (permission) => permission.permission,
-          );
-          const { id, email, name, ...result } = user;
+
+          const { id, email, name, photo, ...result } = user;
           return {
             id,
             email,
             name,
+            photo,
             roles,
-            permissions,
           };
         }
       }
@@ -68,6 +62,6 @@ export class AuthService {
   }
 
   logoutUser(token: string) {
-    return this.streamService.revokeUserToken(token);
+    return this.streamAuthService.revokeUserToken(token);
   }
 }

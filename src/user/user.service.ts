@@ -25,18 +25,12 @@ export class UserService {
               },
             ],
           },
-          UserHasPermission: {
-            create: [
-              {
-                permission: 'read-task',
-              },
-            ],
-          },
         },
         select: {
           id: true,
           email: true,
           name: true,
+          photo: true,
         },
       });
     } catch (error) {
@@ -85,7 +79,7 @@ export class UserService {
     });
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     return this.prisma.user.findFirst({
       where: { id: id },
       select: {
@@ -96,7 +90,7 @@ export class UserService {
     });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     try {
       return this.prisma.user.update({
         data: updateUserDto,
@@ -131,7 +125,7 @@ export class UserService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     try {
       const user = await this.prisma.user.findFirst({ where: { id: id } });
       if (!user) {
@@ -153,7 +147,7 @@ export class UserService {
     }
   }
 
-  async syncRolePermission(id: number, rolePermission: RolePermissionDto) {
+  async syncRolePermission(id: string, rolePermission: RolePermissionDto) {
     try {
       const user = await this.prisma.user.findFirst({ where: { id: id } });
       if (!user) {
@@ -162,15 +156,6 @@ export class UserService {
       const roles = rolePermission?.roles?.map((role) => {
         return { role: role, userId: id };
       });
-      const permissions = rolePermission?.permissions?.map((permission) => {
-        return { permission: permission, userId: id };
-      });
-      const permission = permissions
-        ? await this.prisma.userHasPermission.createMany({
-            data: permissions,
-            skipDuplicates: true,
-          })
-        : [];
       const role = roles
         ? await this.prisma.userHasRole.createMany({
             data: roles,
@@ -178,7 +163,7 @@ export class UserService {
           })
         : [];
 
-      return { permission, role };
+      return { role };
     } catch (error) {
       throw new HttpException(
         {

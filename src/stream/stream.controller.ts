@@ -6,7 +6,7 @@ import { User } from '../interface/user.interface';
 import { StreamService } from './stream.service';
 
 @Controller('stream')
-@UseGuards(JwtAuthGuard, PermissionGuard)
+// @UseGuards(JwtAuthGuard, PermissionGuard)
 export class StreamController {
   constructor(private readonly streamService: StreamService) {}
 
@@ -29,5 +29,12 @@ export class StreamController {
   @Get('/messages/:channelId')
   async getMessages(@Param('channelId') channelId: string) {
     return await this.streamService.getMessages(channelId);
+  }
+
+  @Get('channel/:userId')
+  async getChannel(@Param('userId') userId: string) {
+    const channel = await this.streamService.getChannel(userId);
+    console.log(channel, 'Channel lIST');
+    return await this.streamService.getChannel(userId);
   }
 }

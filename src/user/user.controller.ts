@@ -40,14 +40,14 @@ export class UserController {
 
   @Get(':id')
   @Permission('update-user')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }
 
   @Patch(':id')
   @Permission('read-users')
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
     @Body(ValidationPipe) updateUserDto: UpdateUserDto,
   ) {
     return this.userService.update(id, updateUserDto);
@@ -55,14 +55,14 @@ export class UserController {
 
   @Delete(':id')
   @Permission('delete-user')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.remove(+id);
+  remove(@Param('id') id: string) {
+    return this.userService.remove(id);
   }
 
   @Patch(':id/sync-permissions')
   @Permission('sync-role-permission')
   sync(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
     @Body(ValidationPipe) rolePermission: RolePermissionDto,
   ) {
     return this.userService.syncRolePermission(id, rolePermission);

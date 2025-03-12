@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { StreamService } from '../stream/stream-auth.service';
+import { StreamAuthService } from '../stream/stream-auth.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { jwtConstants } from './constants';
@@ -15,7 +15,7 @@ import { JwtStrategy } from './jwt.strategy';
       signOptions: { expiresIn: '12h' },
     }),
   ],
-  providers: [AuthService, JwtStrategy, StreamService],
+  providers: [AuthService, JwtStrategy, StreamAuthService],
   controllers: [AuthController],
   exports: [AuthService],
 })

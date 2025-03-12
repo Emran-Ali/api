@@ -21,6 +21,18 @@ export class StreamService {
     return await channel.create();
   }
 
+  async getChannel(userId: string) {
+    const filter = { type: 'messaging', members: { $in: [userId] } };
+    return await this.chatClient.queryChannels(
+      filter,
+      [{ last_message_at: -1 }, { last_updated: -1 }],
+      {
+        watch: false, // this is the default
+        state: true,
+      },
+    );
+  }
+
   // Send a message in a direct chat channel
   async sendMessage(channelId: string, userId: string, message: string) {
     const channel = this.chatClient.channel('messaging', channelId);
